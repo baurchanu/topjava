@@ -5,6 +5,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="ru.javawebinar.topjava.util.TimeUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -44,19 +45,26 @@
     </style>
 </head>
 <body>
+<h1>Meals List</h1>
 <table class="tg">
     <tr>
+        <th>ID</th>
         <th width="120">Время</th>
         <th width="120">Описание</th>
         <th width="120">Калории</th>
+        <th colspan=2>Action</th>
     </tr>
     <c:forEach items="${mealsList}" var="meal">
         <tr scope="row" bgcolor=${meal.isExceed() ? "#FA8072" : "#90EE90"}>
-            <td>${meal.getDateTime().toLocalDate()} ${meal.getDateTime().toLocalTime()}</td>
+            <td>${meal.getId()}</td>
+            <td>${TimeUtil.formatLocalDateTime(meal.getDateTime())}</td>
             <td>${meal.getDescription()}</td>
             <td>${meal.getCalories()}</td>
+            <td><a href="meals?action=edit&id=<c:out value="${meal.getId()}"/>">Update</a></td>
+            <td><a href="meals?action=delete&id=<c:out value="${meal.getId()}"/>">Delete</a></td>
         </tr>
     </c:forEach>
 </table>
+<p><a href="meals?action=add">Add Meal</a></p>
 </body>
 </html>
