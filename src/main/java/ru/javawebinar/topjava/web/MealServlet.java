@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -41,6 +42,11 @@ public class MealServlet extends HttpServlet {
                 forward = ALL_MEALS;
                 request.setAttribute("mealsList", MealsUtil.getFilteredWithExceeded(dao.getAll(),
                         LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY));
+                HttpSession session = request.getSession(false);
+                session.setAttribute("mealsList", MealsUtil.getFilteredWithExceeded(dao.getAll(),
+                        LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY));
+                response.sendRedirect("meals");
+                return;
             } else if (action.equalsIgnoreCase("edit")) {
                 forward = INSERT_OR_EDIT;
                 int id = Integer.parseInt(request.getParameter("id"));

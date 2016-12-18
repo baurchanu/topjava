@@ -6,13 +6,14 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Gus' on 13.12.2016.
  */
 public class MockDB {
     private static Map<Integer, Meal> meals = new ConcurrentHashMap<>();
-    private static int counter = 0;
+    private static AtomicInteger counter = new AtomicInteger(0);
 
     static {
         List<Meal> list = new ArrayList<>();
@@ -23,7 +24,7 @@ public class MockDB {
         list.add(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
         list.add(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 499));
         list.forEach(meal -> {
-           meal.setId(counter++);
+           meal.setId(counter.getAndIncrement());
            meals.put(meal.getId(), meal);
         });
     }
@@ -34,8 +35,8 @@ public class MockDB {
         return meals.get(id);
     }
 
-    public static synchronized void addMeal(Meal meal) {
-        meal.setId(counter++);
+    public static void addMeal(Meal meal) {
+        meal.setId(counter.getAndIncrement());
         meals.put(meal.getId(), meal);
     }
 

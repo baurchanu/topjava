@@ -7,7 +7,7 @@
     <title>Title</title>
 </head>
 <body>
-<form method="POST" action="/meals" name="frmAddUser">
+<form method="POST" action="meals" name="frmAddUser">
     ID: <input type="text" readonly="readonly" name="id" value="<c:out value="${meal.getId()}" />" /> <br />
     Время : <input
         type="text" name="dateTime"
