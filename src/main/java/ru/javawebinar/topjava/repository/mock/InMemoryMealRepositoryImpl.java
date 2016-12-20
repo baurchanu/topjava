@@ -1,48 +1,112 @@
 package ru.javawebinar.topjava.repository.mock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
+import sun.rmi.runtime.Log;
 
-import java.util.Collection;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * GKislin
  * 15.09.2015.
  */
 public class InMemoryMealRepositoryImpl implements MealRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryMealRepositoryImpl.class);
+
     private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.MEALS.forEach(this::save);
+        MealsUtil.MEALS.forEach(m -> {
+            User user = new User();
+            user.setId(1);
+            m.setUser(user);
+            m.setId(counter.incrementAndGet());
+            repository.put(m.getId(), m);
+        });
     }
 
     @Override
-    public Meal save(Meal meal) {
+    public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
+            repository.put(meal.getId(), meal);
+            LOG.info("The meal has been added. " + meal);
+            return meal;
+        } else if (userId == meal.getUser().getId()){
+            repository.put(meal.getId(), meal);
+            LOG.info("The meal has been successfully updated. " + meal);
+            return meal;
+        } else {
+            LOG.info("Wrong user ID! The meal hasn't been updated.");
+            return null;
         }
-        repository.put(meal.getId(), meal);
-        return meal;
     }
 
     @Override
-    public void delete(int id) {
-        repository.remove(id);
+    public boolean delete(int id, int userId) {
+        Meal meal;
+        try {
+            meal = repository.get(id);
+        } catch (NullPointerException e) {
+            LOG.info("There is no such meal in the DB!");
+            return false;
+        }
+        if (userId == meal.getUser().getId()) {
+            repository.remove(id);
+            LOG.info("The meal has been successfully removed from the DB.");
+            return true;
+        } else {
+            LOG.info("Wrong user ID! The meal hasn't been removed.");
+            return false;
+        }
     }
 
     @Override
-    public Meal get(int id) {
-        return repository.get(id);
+    public Meal get(int id, int userId) {
+        Meal meal;
+        try {
+            meal = repository.get(id);
+            LOG.info("The meal with getId {} has been successfully found.", id);
+            return meal;
+        } catch (NullPointerException e) {
+            LOG.info("There is no meal with such getId: " + id);
+            return null;
+        }
     }
 
     @Override
-    public Collection<Meal> getAll() {
-        return repository.values();
+    public List<Meal> getAll(int userId) {
+        if (repository.values().size() > 0) {
+            return repository.values()
+                    .stream()
+                    .filter(meal -> meal.getUser().getId() == userId)
+                    .sorted((m1, m2) -> m2.getDateTime().compareTo(m1.getDateTime()))
+                    .collect(Collectors.toList());
+        } else {
+            LOG.info("There are no meals in the DB. User getId: " + userId);
+            return Collections.emptyList();
+        }
+    }
+
+    public List<Meal> getAllFiltered(int userId, LocalDate fromDate, LocalDate toDate, LocalTime fromTime, LocalTime toTime) {
+        return repository.values()
+                .stream()
+                .filter(meal -> meal.getUser().getId() == userId)
+                .filter(meal -> DateTimeUtil.isBetweenTime(meal.getDateTime().toLocalTime(), fromTime, toTime))
+                .filter(meal -> DateTimeUtil.isBetweenDate(meal.getDateTime().toLocalDate(), fromDate, toDate))
+                .sorted((m1, m2) -> m2.getDateTime().compareTo(m1.getDateTime()))
+                .collect(Collectors.toList());
     }
 }
 

@@ -16,6 +16,13 @@
     </style>
 </head>
 <body>
+<form method="GET" action="meals" name="frmFilter">
+    From date: <input type="date" name="fromDate"/>
+    To date: <input type="date" name="toDate"/><br/>
+    From time: <input type="time" name="fromTime"/>
+    To time: <input type="time" name="toTime"/><br/>
+    <input type="submit" value="Filter" />
+</form>
 <section>
     <h2><a href="index.html">Home</a></h2>
     <h2>Meal list</h2>
@@ -24,6 +31,7 @@
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
+            <th>ID</th>
             <th>Date</th>
             <th>Description</th>
             <th>Calories</th>
@@ -32,8 +40,9 @@
         </tr>
         </thead>
         <c:forEach items="${meals}" var="meal">
-            <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.model.MealWithExceed"/>
+            <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.to.MealWithExceed"/>
             <tr class="${meal.exceed ? 'exceeded' : 'normal'}">
+                <td>${meal.getId()}</td>
                 <td>
                         <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
                         <%--<%=TimeUtil.toString(meal.getDateTime())%>--%>
