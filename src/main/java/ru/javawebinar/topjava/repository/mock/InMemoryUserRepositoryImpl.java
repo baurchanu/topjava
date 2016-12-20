@@ -51,7 +51,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
             user = repository.get(id);
             LOG.info("The user with getId {} has been successfully found.", id);
         } catch (NullPointerException e) {
-            LOG.info("There is no user with such getId: " + id);
+            LOG.info("There is no user with such id: " + id);
         }
         return user;
     }

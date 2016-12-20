@@ -12,6 +12,7 @@ import java.util.List;
  * GKislin
  * 06.03.2015.
  */
+
 public interface MealRepository {
     Meal save(Meal meal, int userId);
     // false if not found

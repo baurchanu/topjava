@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.repository.mock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
  * GKislin
  * 15.09.2015.
  */
+
+@Repository
 public class InMemoryMealRepositoryImpl implements MealRepository {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryMealRepositoryImpl.class);
 
@@ -80,33 +83,42 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             LOG.info("The meal with getId {} has been successfully found.", id);
             return meal;
         } catch (NullPointerException e) {
-            LOG.info("There is no meal with such getId: " + id);
+            LOG.info("There is no meal with such id: " + id);
             return null;
         }
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        if (repository.values().size() > 0) {
-            return repository.values()
+        List<Meal> meals = repository.values()
                     .stream()
                     .filter(meal -> meal.getUser().getId() == userId)
                     .sorted((m1, m2) -> m2.getDateTime().compareTo(m1.getDateTime()))
                     .collect(Collectors.toList());
+        if (meals.size() > 0) {
+            LOG.info("All user's meals have been gotten form the DB. User id: " + userId);
+            return meals;
         } else {
-            LOG.info("There are no meals in the DB. User getId: " + userId);
+            LOG.info("There are no meals in the DB. User id: " + userId);
             return Collections.emptyList();
         }
     }
 
     public List<Meal> getAllFiltered(int userId, LocalDate fromDate, LocalDate toDate, LocalTime fromTime, LocalTime toTime) {
-        return repository.values()
+        List<Meal> meals = repository.values()
                 .stream()
                 .filter(meal -> meal.getUser().getId() == userId)
                 .filter(meal -> DateTimeUtil.isBetweenTime(meal.getDateTime().toLocalTime(), fromTime, toTime))
                 .filter(meal -> DateTimeUtil.isBetweenDate(meal.getDateTime().toLocalDate(), fromDate, toDate))
                 .sorted((m1, m2) -> m2.getDateTime().compareTo(m1.getDateTime()))
                 .collect(Collectors.toList());
+        if (meals.size() > 0) {
+            LOG.info("All filtered user's meals have been gotten form the DB. User id: " + userId);
+            return meals;
+        } else {
+            LOG.info("There are no meals in the list. User id: " + userId);
+            return Collections.emptyList();
+        }
     }
 }
 

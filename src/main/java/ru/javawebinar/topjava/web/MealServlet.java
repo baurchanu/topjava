@@ -3,12 +3,17 @@ package ru.javawebinar.topjava.web;
 import com.sun.org.apache.xpath.internal.SourceTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.Role;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
+import ru.javawebinar.topjava.web.user.AdminRestController;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -20,8 +25,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * User: gkislin
@@ -31,11 +40,17 @@ public class MealServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(MealServlet.class);
 
     private MealRestController controller;
+    ConfigurableApplicationContext appCtx;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        controller = new MealRestController();
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        controller = appCtx.getBean(MealRestController.class);
+    }
+
+    public void destroy() {
+        appCtx.close();
     }
 
     @Override
@@ -77,16 +92,33 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String fromDate = request.getParameter("fromDate");
-        String toDate = request.getParameter("toDate");
-        String fromTime = request.getParameter("fromTime");
-        String toTime = request.getParameter("toTime");
+        if (request.getParameter("fromDate") != null) {
+            String fromDate = request.getParameter("fromDate");
+            String toDate = request.getParameter("toDate");
+            String fromTime = request.getParameter("fromTime");
+            String toTime = request.getParameter("toTime");
+            LocalTime startTime = LocalTime.MIN;
+            LocalTime endTime = LocalTime.MAX;
+            LocalDate startDate = LocalDate.MIN;
+            LocalDate endDate = LocalDate.MAX;
 
-        if (fromDate != null || toDate != null || fromTime != null || toTime != null) {
-            LocalTime lft = LocalTime.parse(fromTime);
-            LocalTime ltt = LocalTime.parse(toTime);
-            LocalDate ldf = LocalDate.parse(fromDate);
-            LocalDate ltd = LocalDate.parse(toDate);
+            if (!fromTime.isEmpty()) {
+                startTime = LocalTime.parse(fromTime);
+            }
+            if (!toTime.isEmpty()) {
+                endTime = LocalTime.parse(toTime);
+            }
+            if (!fromDate.isEmpty()) {
+                startDate = LocalDate.parse(fromDate);
+            }
+            if (!toDate.isEmpty()) {
+                endDate = LocalDate.parse(toDate);
+            }
+
+            LOG.info("getAllFiltered");
+            request.setAttribute("meals",
+                    controller.getAllFiltered(startDate, endDate, startTime, endTime));
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
         }
 
         String action = request.getParameter("action");

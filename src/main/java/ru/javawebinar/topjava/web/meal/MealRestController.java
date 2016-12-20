@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.web.meal;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
@@ -16,8 +18,15 @@ import java.util.List;
  * GKislin
  * 06.03.2015.
  */
+@Controller
 public class MealRestController {
-    private MealService service = new MealServiceImpl();
+
+    private MealService service;
+
+    @Autowired
+    public void setService(MealService service) {
+        this.service = service;
+    }
 
     public Meal create(Meal meal) {
         User user = new User();
@@ -46,7 +55,9 @@ public class MealRestController {
         return MealsUtil.getWithExceeded(service.getAll(AuthorizedUser.getId()), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
-    public List<MealWithExceed> getAllFiltered(int userId, LocalDate fromDate, LocalDate toDate, LocalTime fromTime, LocalTime toTime) {
-        return MealsUtil.getWithExceeded(service.getAllFiltered(userId, fromDate, toDate, fromTime, toTime), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+    public List<MealWithExceed> getAllFiltered(LocalDate fromDate, LocalDate toDate, LocalTime fromTime, LocalTime toTime) {
+        return MealsUtil.getWithExceeded(service.getAllFiltered(AuthorizedUser.getId(), fromDate, toDate, fromTime, toTime), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
+
+
 }
