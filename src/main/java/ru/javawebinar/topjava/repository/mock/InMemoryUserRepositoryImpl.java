@@ -24,14 +24,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean delete(int id) {
-        try {
-            repository.remove(id);
-            LOG.info("The user has been successfully removed. Id=" + id);
-            return true;
-        } catch (NullPointerException e) {
-            LOG.info("The user hasn't been removed! Id=" + id);
-            return false;
-        }
+        return (repository.remove(id) != null);
     }
 
     @Override
@@ -39,21 +32,12 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
         if (user.isNew()) {
             user.setId(counter.incrementAndGet());
         }
-        repository.put(user.getId(), user);
-        LOG.info("The user has been successfully saved. " + user);
-        return user;
+        return repository.put(user.getId(), user);
     }
 
     @Override
     public User get(int id) {
-        User user = null;
-        try {
-            user = repository.get(id);
-            LOG.info("The user with getId {} has been successfully found.", id);
-        } catch (NullPointerException e) {
-            LOG.info("There is no user with such id: " + id);
-        }
-        return user;
+        return repository.get(id);
     }
 
     @Override

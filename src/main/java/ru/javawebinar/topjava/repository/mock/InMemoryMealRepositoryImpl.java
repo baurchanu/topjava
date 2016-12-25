@@ -31,9 +31,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     {
         MealsUtil.MEALS.forEach(m -> {
-            User user = new User();
-            user.setId(1);
-            m.setUser(user);
+            m.setUserId(1);
             m.setId(counter.incrementAndGet());
             repository.put(m.getId(), m);
         });
@@ -44,79 +42,70 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             repository.put(meal.getId(), meal);
-            LOG.info("The meal has been added. " + meal);
+            //The meal has been added
             return meal;
-        } else if (userId == meal.getUser().getId()){
+        } else if (userId == meal.getUserId()){
             repository.put(meal.getId(), meal);
-            LOG.info("The meal has been successfully updated. " + meal);
+            //The meal has been successfully updated
             return meal;
         } else {
-            LOG.info("Wrong user ID! The meal hasn't been updated.");
+            //Wrong user ID! The meal hasn't been updated
             return null;
         }
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        Meal meal;
+        Meal meal = repository.get(id);
         try {
-            meal = repository.get(id);
+            if (userId == meal.getUserId()) {
+                repository.remove(id);
+                //The meal has been successfully removed from the DB
+                return true;
+            } else {
+                //Wrong user ID! The meal hasn't been removed
+                return false;
+            }
         } catch (NullPointerException e) {
-            LOG.info("There is no such meal in the DB!");
-            return false;
-        }
-        if (userId == meal.getUser().getId()) {
-            repository.remove(id);
-            LOG.info("The meal has been successfully removed from the DB.");
-            return true;
-        } else {
-            LOG.info("Wrong user ID! The meal hasn't been removed.");
+            //There is no such meal in the DB!
             return false;
         }
     }
 
     @Override
     public Meal get(int id, int userId) {
-        Meal meal;
-        try {
-            meal = repository.get(id);
-            LOG.info("The meal with getId {} has been successfully found.", id);
-            return meal;
-        } catch (NullPointerException e) {
-            LOG.info("There is no meal with such id: " + id);
-            return null;
-        }
+        Meal meal = repository.get(id);
+        return meal;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
         List<Meal> meals = repository.values()
-                    .stream()
-                    .filter(meal -> meal.getUser().getId() == userId)
-                    .sorted((m1, m2) -> m2.getDateTime().compareTo(m1.getDateTime()))
-                    .collect(Collectors.toList());
+                .stream()
+                .filter(meal -> meal.getUserId() == userId)
+                .sorted((m1, m2) -> m2.getDateTime().compareTo(m1.getDateTime()))
+                .collect(Collectors.toList());
         if (meals.size() > 0) {
-            LOG.info("All user's meals have been gotten form the DB. User id: " + userId);
+            //All user's meals have been gotten form the DB
             return meals;
         } else {
-            LOG.info("There are no meals in the DB. User id: " + userId);
+            //There are no meals in the DB
             return Collections.emptyList();
         }
     }
 
     public List<Meal> getAllFiltered(int userId, LocalDate fromDate, LocalDate toDate, LocalTime fromTime, LocalTime toTime) {
-        List<Meal> meals = repository.values()
+        List<Meal> allMeals = getAll(userId);
+        List<Meal> meals = allMeals
                 .stream()
-                .filter(meal -> meal.getUser().getId() == userId)
                 .filter(meal -> DateTimeUtil.isBetweenTime(meal.getDateTime().toLocalTime(), fromTime, toTime))
                 .filter(meal -> DateTimeUtil.isBetweenDate(meal.getDateTime().toLocalDate(), fromDate, toDate))
-                .sorted((m1, m2) -> m2.getDateTime().compareTo(m1.getDateTime()))
                 .collect(Collectors.toList());
         if (meals.size() > 0) {
-            LOG.info("All filtered user's meals have been gotten form the DB. User id: " + userId);
+            //All filtered user's meals have been gotten form the DB
             return meals;
         } else {
-            LOG.info("There are no meals in the list. User id: " + userId);
+            //There are no meals in the list
             return Collections.emptyList();
         }
     }

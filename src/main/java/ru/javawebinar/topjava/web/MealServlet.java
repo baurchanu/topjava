@@ -50,6 +50,7 @@ public class MealServlet extends HttpServlet {
     }
 
     public void destroy() {
+        super.destroy();
         appCtx.close();
     }
 
@@ -83,7 +84,7 @@ public class MealServlet extends HttpServlet {
                 controller.create(meal);
             } else {
                 LOG.info("Update {}", meal);
-                controller.update(meal, meal.getId());
+                controller.update(meal);
             }
             response.sendRedirect("meals");
         }

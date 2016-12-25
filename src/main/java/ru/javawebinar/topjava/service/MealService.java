@@ -13,7 +13,7 @@ import java.util.List;
  * 15.06.2015.
  */
 public interface MealService {
-    Meal save(Meal meal, int userId);
+    Meal save(Meal meal, int userId) throws NotFoundException;
 
     void delete(int id, int userId) throws NotFoundException;
 

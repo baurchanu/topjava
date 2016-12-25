@@ -29,17 +29,12 @@ public class MealRestController {
     }
 
     public Meal create(Meal meal) {
-        User user = new User();
-        user.setId(AuthorizedUser.getId());
-        meal.setUser(user);
+        meal.setUserId(AuthorizedUser.getId());
         return service.save(meal, AuthorizedUser.getId());
     }
 
-    public void update(Meal meal, int id) {
-        meal.setId(id);
-        User user = new User();
-        user.setId(AuthorizedUser.getId());
-        meal.setUser(user);
+    public void update(Meal meal) {
+        meal.setUserId(AuthorizedUser.getId());
         service.save(meal, AuthorizedUser.getId());
     }
 
@@ -58,6 +53,4 @@ public class MealRestController {
     public List<MealWithExceed> getAllFiltered(LocalDate fromDate, LocalDate toDate, LocalTime fromTime, LocalTime toTime) {
         return MealsUtil.getWithExceeded(service.getAllFiltered(AuthorizedUser.getId(), fromDate, toDate, fromTime, toTime), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
-
-
 }

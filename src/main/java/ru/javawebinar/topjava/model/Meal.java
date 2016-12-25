@@ -9,22 +9,20 @@ import java.time.LocalTime;
  * 11.01.2015.
  */
 public class Meal extends BaseEntity {
-    private Integer id;
-
     private final LocalDateTime dateTime;
 
     private final String description;
 
     private final int calories;
 
-    private User user;
+    private int userId;
 
-    public User getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
@@ -36,14 +34,6 @@ public class Meal extends BaseEntity {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public LocalDateTime getDateTime() {
@@ -73,11 +63,10 @@ public class Meal extends BaseEntity {
     @Override
     public String toString() {
         return "Meal{" +
-                "getId=" + id +
-                ", dateTime=" + dateTime +
+                "dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
-                ", user=" + user +
+                ", userId=" + userId +
                 '}';
     }
 }
