@@ -22,7 +22,7 @@ import static ru.javawebinar.topjava.UserTestData.USER;
  * GKislin
  * 13.03.2015.
  */
-@ContextConfiguration("classpath:spring/spring-app.xml")
+@ContextConfiguration("classpath:spring/spring-test.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class InMemoryAdminRestControllerSpringTest {
 
@@ -34,7 +34,11 @@ public class InMemoryAdminRestControllerSpringTest {
 
     @Before
     public void setUp() throws Exception {
-        repository.getAll().forEach(u -> repository.delete(u.getId()));
+        repository.getAll().forEach(u -> {
+            if (u.getId() != USER.getId() || u.getId() != ADMIN.getId()) {
+                repository.delete(u.getId());
+            }
+        });
         repository.save(USER);
         repository.save(ADMIN);
     }
