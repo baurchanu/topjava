@@ -1,5 +1,8 @@
 Java Enterprise Online Project 
 ===============================
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/573d7848d2f946f7825a4ea747bc8295)](https://www.codacy.com/app/baurchanu/topjava?utm_source=github.com&utm_medium=referral&utm_content=baurchanu/topjava&utm_campaign=badger)
+
 Наиболее востребованные технологии /инструменты / фреймворки Java Enterprise:
 Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson)/ Bootstrap(CSS)/ jQuery + plugins.
 
@@ -87,6 +90,13 @@ Optional
 - Код проекта менять можно! Одна из распространенных ошибок как в тестовых заданиях на собеседовании, так и при работе на проекте, что ничего нельзя менять. Конечно при правках в рабочем проекте обязятельно нужно проконсультироваться/проревьюится у авторов кода (находится по истории VCS)
 - Наследовать `UserMealWithExceed` от `UserMeal` я не буду, т.к. это разные сущности: Transfer Object и Entity. Мы будет их проходить на 2м уроке.
 - Правильная реализация должна быть простой и красивой, можно сделать 2-мя способами: через стримы и через циклы. Сложность должна быть O(N), т.е. без вложенных стримов и циклов.
+- При реализации через циклы посмотрите в `Map` на методы `getOrDefault` или `merge`
+- При реализации через `Stream` заменяйте `forEach` оператором `stream.map(..)`
+- Объявляйте переменные непосредственно перед использованием (если возможно - сразу с инициализацией). При объявлении коллекций используйте тип переменной - интерфейс (Map, List, ..)
+- Если IDEA предлагает оптимизацию (желтым подчеркивает), нарпимер заменить лямбду на метод-референс, соглашайтесь (Alt+Enter)
+- Пользуйтесь форматированием кода в IDEA: `Alt+Ctrl+L`
+- Перед check-in проверяйте чендж-лист (курсор на файл и Ctrl+D): не оставляйте в коде ничего лишнего (закомментированный код, TODO и пр.). Если файл не меняется (например только пробелы или переводы строк), делайте ему revert.
+- `System.out.println` нельзя делать нигде, кроме как в `main`. Позже введем логирование.
 
 -----
 
@@ -96,11 +106,12 @@ Optional
 Все остальное - опционально.
 
 #### HTML, JavaScript, CSS 
+- <a href="http://www.w3schools.com/default.asp">HTML, CSS, JAVASCRIPT, SQL, JQUERY, BOOTSTRAP</a>
 - <a href="https://www.youtube.com/watch?v=j0ycGQKqMT4">Введение в программирование на JavaScript</a>
--  <a href="http://www.intuit.ru/studies/courses/1102/134/info">Основы работы с HTML/CSS/JavaScript</a>
--  <a href="http://itchief.ru/lessons/javascript/94-javascript-introduction">JavaScript - Основы</a>
--  <a href="http://itchief.ru/lessons/bootstrap-3/19-introduction-to-twitter-bootstrap-3">Bootstrap 3 - Основы</a>
--  <a href="http://anton.shevchuk.name/jquery/">jQuery для начинающих</a>
+- <a href="http://www.intuit.ru/studies/courses/1102/134/info">Основы работы с HTML/CSS/JavaScript</a>
+- <a href="http://itchief.ru/lessons/javascript/94-javascript-introduction">JavaScript - Основы</a>
+- <a href="http://itchief.ru/lessons/bootstrap-3/19-introduction-to-twitter-bootstrap-3">Bootstrap 3 - Основы</a>
+- <a href="http://anton.shevchuk.name/jquery/">jQuery для начинающих</a>
 
 #### Java (базовые вещи)
 - <a href="http://www.intuit.ru/studies/courses/16/16/info">Интуит. Программирование на Java</a>
