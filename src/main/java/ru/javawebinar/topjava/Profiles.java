@@ -9,7 +9,6 @@ public class Profiles {
             POSTGRES = "postgres",
             HSQLDB = "hsqldb",
             JDBC = "jdbc",
-            JPA = "jpa";
-
-    public static final String ACTIVE_DB = POSTGRES;
+            JPA = "jpa",
+            DATA_JPA = "datajpa";
 }
