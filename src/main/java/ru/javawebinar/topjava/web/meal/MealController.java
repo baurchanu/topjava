@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web;
+package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,27 +15,25 @@ import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 @Controller
-public class MealController extends MealRestController{
-    @RequestMapping(value = "/meals")
-    public String getAll(HttpServletRequest request) {
-        String response = null;
-        if (request.getMethod().equals("GET")) {
+public class MealController extends AbstractMealController {
+    @RequestMapping(value = "/meals", method=RequestMethod.GET)
+    public String getAllGet(HttpServletRequest request) {
             request.setAttribute("meals", super.getAll());
-            response = "meals";
-        } else if (request.getMethod().equals("POST")) {
-            final Meal meal = new Meal(
-                    LocalDateTime.parse(request.getParameter("dateTime")),
-                    request.getParameter("description"),
-                    Integer.valueOf(request.getParameter("calories")));
-            if (request.getParameter("id").isEmpty()) {
-                super.create(meal);
-            } else {
-                super.update(meal, getId(request));
-            }
-            response = "redirect:meals";
-        }
+            return "meals";
+    }
 
-        return response;
+    @RequestMapping(value = "/meals", method=RequestMethod.POST)
+    public String getAllPost(HttpServletRequest request) {
+        final Meal meal = new Meal(
+                LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"),
+                Integer.valueOf(request.getParameter("calories")));
+        if (request.getParameter("id").isEmpty()) {
+            super.create(meal);
+        } else {
+            super.update(meal, getId(request));
+        }
+        return "redirect:meals";
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
