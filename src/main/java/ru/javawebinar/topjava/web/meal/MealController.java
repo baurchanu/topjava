@@ -14,15 +14,16 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
+@RequestMapping(value = "/meals")
 @Controller
 public class MealController extends AbstractMealController {
-    @RequestMapping(value = "/meals", method=RequestMethod.GET)
+    @RequestMapping(method=RequestMethod.GET)
     public String getAllGet(HttpServletRequest request) {
             request.setAttribute("meals", super.getAll());
             return "meals";
     }
 
-    @RequestMapping(value = "/meals", method=RequestMethod.POST)
+    @RequestMapping(method=RequestMethod.POST)
     public String getAllPost(HttpServletRequest request) {
         final Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
@@ -33,31 +34,31 @@ public class MealController extends AbstractMealController {
         } else {
             super.update(meal, getId(request));
         }
-        return "redirect:meals";
+        return "redirect:/meals";
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    @RequestMapping(value = "delete", method = RequestMethod.GET)
     public String delete(HttpServletRequest request) {
         int id = getId(request);
         super.delete(id);
-        return "redirect:meals";
+        return "redirect:/meals";
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.GET)
+    @RequestMapping(value = "update", method = RequestMethod.GET)
     public String update(HttpServletRequest request) {
         final Meal meal = super.get(getId(request));
         request.setAttribute("meal", meal);
         return "meal";
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    @RequestMapping(value = "create", method = RequestMethod.GET)
     public String create(HttpServletRequest request) {
         final Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
         request.setAttribute("meal", meal);
         return "meal";
     }
 
-    @RequestMapping(value = "/filter", method = RequestMethod.POST)
+    @RequestMapping(value = "filter", method = RequestMethod.POST)
     public String getBetween(HttpServletRequest request) {
         LocalDate startDate = DateTimeUtil.parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = DateTimeUtil.parseLocalDate(request.getParameter("endDate"));
