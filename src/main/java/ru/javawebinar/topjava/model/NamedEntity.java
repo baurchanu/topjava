@@ -13,6 +13,7 @@ import javax.persistence.MappedSuperclass;
 public class NamedEntity extends BaseEntity {
 
     @NotBlank
+
     @Column(name = "name", nullable = false)
     protected String name;
 
